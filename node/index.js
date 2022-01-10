@@ -11,12 +11,6 @@ const config = {
 const mysql = require('mysql')
 const connection = mysql.createPool(config)
 
-const sql_create_table = `CREATE TABLE IF NOT EXISTS people(id int not null auto_increment, name varchar(200), primary key (id));`
-connection.query(sql_create_table)
-
-const sql_insert = `INSERT INTO people(name) values('Jose')`
-connection.query(sql_insert)
-
 app.get('/', (req,res) => {
 
     const sql_people = `SELECT name FROM people;`
@@ -30,6 +24,14 @@ app.get('/', (req,res) => {
  
 })
 
-app.listen(port, ()=> {
-    console.log('Rodando na porta ' + port)
+const sql_create_table = `CREATE TABLE IF NOT EXISTS people(id int not null auto_increment, name varchar(200), primary key (id));`
+connection.query(sql_create_table, function (error) {
+    if (error) throw error;
+    const sql_insert = `INSERT INTO people(name) values('Jose')`
+    connection.query(sql_insert, function (err) {
+        if (error) throw err;
+        app.listen(port, ()=> {
+            console.log('Rodando na porta ' + port)
+        })
+    })
 })
